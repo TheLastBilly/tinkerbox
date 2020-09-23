@@ -55,24 +55,48 @@ init:
     mov gs, ax
     mov ss, ax
 
-    ;Print our beloved welcome message
-    mov esi, welcome
+    ;Set VGA to blue
     mov ebx, 0xb8000
+    
+    ;Print our beloved welcome message
+    push welcome
+    call print
 
-printf:
+    mov [text_properties], word 0x0c00
+    push welcome
+    call print
+
+print:
+    push ebp
+    mov ebp, esp
+    push esi
+
+    mov esi, [ebp+8]; Get the string to print and put it on esi
+    push ecx
+.loop:
     lodsb
-    cmp al, 0
+    cmp al, 0 ; Is it the end of the string?
     je done
-    or eax, 0x0100
-    mov word [ebx], ax
+    mov ecx, [text_properties]
+    or eax, ecx ; Apply proteries to text
+    mov word [ebx], ax ; Move it to the buffer
     add ebx, 2
-    jmp printf
+    jmp .loop
+
+    pop ecx
+    pop esi
+    mov esp, ebp
+    pop ebp
+    add esp, 4
+    ret
 
 done:
     cli
     hlt
     
-welcome: db "Welcome to SimpleBoot!"
+welcome: db "Welcome to SimpleBoot!, now we're running in 32 bit mode :p"
+text_properties: dw 0x0f00
+screen_pointer: dd 0x00000000
 
 times 510- ($-$$) db 0
 dw 0xaa55
