@@ -10,43 +10,26 @@ boot:
     mov ax, 0x3
     int 0x10
 
-    ;Lods the global descriptor table to the cpu
+    ;Get disk idea
+    mov [disk_id], dl
+
+    mov ah, 0x2  
+	mov al, 1      
+	mov ch, 0      
+	mov dh, 0      
+	mov cl, 2      
+	mov dl, [disk_id] 
+	mov bx, bootloader_start
+    int 0x13
+
+    cli
+
+    ;Loads the global descriptor table to the cpu
     lgdt [gdt_pointer]
     mov eax, cr0
     or eax, 0x01 ;Set protected mode bit
     mov cr0, eax
-    
-    jmp CODE_SEG:init ;jump to the bootloader's entry point
 
-;Define the gdt table, more info on the subject can be found here: http://3zanders.co.uk/2017/10/16/writing-a-bootloader2/
-gdt_start:
-    dq 0x0
-gdt_code:
-    dw 0xFFFF
-    dw 0x0
-    db 0x0
-    db 10011010b
-    db 11001111b
-    db 0x0
-gdt_data:
-    dw 0xFFFF
-    dw 0x0
-    db 0x0
-    db 10010010b
-    db 11001111b
-    db 0x0
-gdt_end:
-
-gdt_pointer:
-    dw gdt_end - gdt_start
-    dd gdt_start
-
-CODE_SEG equ gdt_code - gdt_start ;Code segment offset
-DATA_SEG equ gdt_data - gdt_start ; Data segment offset
-
-bits 32
-
-init:
     ;Set segment registers
     mov ax, DATA_SEG
     mov ds, ax
@@ -54,7 +37,51 @@ init:
     mov fs, ax
     mov gs, ax
     mov ss, ax
-    
+
+    jmp CODE_SEG:init ;jump to the bootloader's entry point
+
+;Define the gdt table, more info on the subject can be found here: http://3zanders.co.uk/2017/10/16/writing-a-bootloader2/
+gdt_start:
+	dq 0x0
+gdt_code:
+	dw 0xFFFF
+	dw 0x0
+	db 0x0
+	db 10011010b
+	db 11001111b
+	db 0x0
+gdt_data:
+	dw 0xFFFF
+	dw 0x0
+	db 0x0
+	db 10010010b
+	db 11001111b
+	db 0x0
+gdt_end:
+gdt_pointer:
+    dw gdt_end - gdt_start
+    dd gdt_start
+
+disk_id: db 0
+
+CODE_SEG equ gdt_code - gdt_start ;Code segment offset
+DATA_SEG equ gdt_data - gdt_start ; Data segment offset
+
+times 510- ($-$$) db 0
+dw 0xaa55
+
+bootloader_start:
+
+welcome: db "I made a bootloader bitch!", 0x00
+
+text_properties: dw 0x0f00
+screen_base_pointer equ 0xb8000
+screen_pointer: dd screen_base_pointer
+
+bits 32
+
+; Main function
+init:
     ;Print our beloved welcome message
     push welcome
     call print
@@ -64,6 +91,7 @@ init:
     call print
 
     jmp done
+
 
 ; Print a character to VGA
 print:
@@ -155,11 +183,4 @@ done:
     nop
     jmp .loop
 
-welcome: db "I made a bootloader bitch!, I even made some functions in assembler!", 0x00
-intro: db "A simple-ass bootloader", 0x00
-text_properties: dw 0x0f00
-screen_base_pointer equ 0xb8000
-screen_pointer: dd screen_base_pointer
-
-times 510- ($-$$) db 0
-dw 0xaa55
+times 1024 - ($-$$) db 0
