@@ -62,9 +62,10 @@ init:
     push welcome
     call print
 
-    mov [text_properties], word 0x0c00
     push welcome
     call print
+
+    jmp done
 
 print:
     push ebp
@@ -76,25 +77,26 @@ print:
 .loop:
     lodsb
     cmp al, 0 ; Is it the end of the string?
-    je done
+    je print_end
     mov ecx, [text_properties]
     or eax, ecx ; Apply proteries to text
     mov word [ebx], ax ; Move it to the buffer
     add ebx, 2
     jmp .loop
 
+print_end:
     pop ecx
     pop esi
     mov esp, ebp
     pop ebp
-    add esp, 4
     ret
 
 done:
     cli
     hlt
     
-welcome: db "Welcome to SimpleBoot!, now we're running in 32 bit mode :p"
+welcome: db "Welcome to SimpleBoot!, now we're running in 32 bit mode", 0x00
+intro: db "A simple-ass bootloader", 0x00
 text_properties: dw 0x0f00
 screen_pointer: dd 0x00000000
 
