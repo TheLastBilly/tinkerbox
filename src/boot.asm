@@ -3,16 +3,28 @@ bits 16
 global boot
 
 boot:
+    ; Load disk id
+    mov [disk_id], dl
+
     ;Turns on A20 line
     mov ax, 0x2401
     int 0x15
 
-    ;Sets vga to text mode
-    mov ah, 0x0e
+    ;Sets vga to vga mode
+    mov ax, 0x13
+    int 0x10
 
-    ;Print our beloved welcome message
-    mov esi, welcome
-    call print
+    ;load image from disk
+    mov ah, 0x02
+    mov al, 8
+    mov ch, 0
+    mov dh, 0
+    mov cl, 2
+    mov dl, [disk_id] 
+    mov bx, kernel_entry
+    int 0x13
+
+    cli
 
     ;Loads the global descriptor table to the cpu
     lgdt [gdt_pointer]
@@ -27,8 +39,8 @@ boot:
     mov fs, ax
     mov gs, ax
     mov ss, ax
-
-    jmp CODE_SEG:init ;jump to the bootloader's entry point
+    
+    jmp CODE_SEG:kernel_init
 
 ;Define the gdt table, more info on the subject can be found here: http://3zanders.co.uk/2017/10/16/writing-a-bootloader2/
 gdt_start:
@@ -54,25 +66,6 @@ gdt_pointer:
 
 CODE_SEG equ gdt_code - gdt_start ;Code segment offset
 DATA_SEG equ gdt_data - gdt_start ; Data segment offset
-
-; Main function
-init:
-
-    jmp done
-
-
-; Print a character to VGA
-print:
-    push eax
-.loop:
-    lodsb
-    cmp al, 0
-    je print.end
-    int 0x10
-    jmp .loop
-print.end:
-    pop eax
-    ret
     
 done:
     cli
@@ -82,6 +75,24 @@ done:
     jmp .loop
 
 welcome: db "Welcome to the makaloader!", 0x00
+disk_id: db 0x00
     
 times 510- ($-$$) db 0
 dw 0xaa55
+
+bits 32
+kernel_entry:
+
+kernel_init:
+    mov esp, kernel_stack_top
+    extern kentry
+    call kentry
+    cli
+    hlt
+
+section .bss
+align 4
+
+kernel_stack_bottom: equ $
+	resb 16384 ; 16 KB
+kernel_stack_top:

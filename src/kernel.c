@@ -1,9 +1,17 @@
-#define VIDEO_BUFFER_POINTER 0xb8000
+#define VGA_MAX_HEIGHT  200
+#define VGA_MAX_WIDHT   320
 
-extern void entry()
+#define VGA_ADDRESS_START 0xA0000
+
+void vga_draw_pixels(unsigned short x, unsigned short y, unsigned short pixel )
 {
-    const char * test = "This is a test from real mode!";
-    unsigned char * vga = (unsigned char *)VIDEO_BUFFER_POINTER;
-    for(int i = 0; i < 31; i++)
-        vga[i] = test[i] | 0x0f00;        
+    unsigned char * vga_mem = (unsigned char *)VGA_ADDRESS_START;
+    unsigned short pos = x + y*VGA_MAX_WIDHT;
+    vga_mem[pos] = pixel & 0xff;
+}
+
+void kentry()
+{
+    for(int y = 0; y < VGA_MAX_HEIGHT; y++)
+        vga_draw_pixels(y, y, 10);
 }
