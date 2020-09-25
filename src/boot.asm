@@ -1,5 +1,6 @@
+section .boot
 bits 16
-org 0x7c00
+global boot
 
 boot:
     ;Turns on A20 line
@@ -7,22 +8,11 @@ boot:
     int 0x15
 
     ;Sets vga to text mode
-    mov ax, 0x3
-    int 0x10
+    mov ah, 0x0e
 
-    ;Get disk idea
-    mov [disk_id], dl
-
-    mov ah, 0x2  
-	mov al, 1      
-	mov ch, 0      
-	mov dh, 0      
-	mov cl, 2      
-	mov dl, [disk_id] 
-	mov bx, bootloader_start
-    int 0x13
-
-    cli
+    ;Print our beloved welcome message
+    mov esi, welcome
+    call print
 
     ;Loads the global descriptor table to the cpu
     lgdt [gdt_pointer]
@@ -62,118 +52,26 @@ gdt_pointer:
     dw gdt_end - gdt_start
     dd gdt_start
 
-disk_id: db 0
-
 CODE_SEG equ gdt_code - gdt_start ;Code segment offset
 DATA_SEG equ gdt_data - gdt_start ; Data segment offset
 
-times 510- ($-$$) db 0
-dw 0xaa55
-
-bootloader_start:
-
-welcome: db "I made a bootloader bitch!", 0x00
-
-text_properties: dw 0x0f00
-screen_base_pointer equ 0xb8000
-screen_pointer: dd screen_base_pointer
-
-bits 32
-
 ; Main function
 init:
-    ;Print our beloved welcome message
-    push welcome
-    call print
-    call new_line
-
-    push welcome
-    call print
 
     jmp done
 
 
 ; Print a character to VGA
 print:
-    push ebp
-    mov ebp, esp
-    push esi
-    push ecx
-    
-    ; Get the string to print and put it on esi
-    mov esi, [ebp+8]
-
-.loop:
-    ; Shift string to the right
-    lodsb
-    cmp al, 0 ; Is it the end of the string?
-    je print_end ; If so, skip to the end of the function
-
-    ; Apply text properties to text 
-    mov cx, word [text_properties]
-    or ax, cx
-
-    ; Move character to buffer, and increment buffer by one chacter (2 bytes)
-    mov ecx, [screen_pointer]
-    mov [ecx], ax
-    add dword [screen_pointer], 2
-
-    jmp .loop
-
-print_end:
-    pop ecx
-    pop esi
-    mov esp, ebp
-    pop ebp
-    ret
-
-; Makes a new line for the terminal
-new_line:
-    push ebp
-    mov ebp, esp
-
-    push edx ; Stores the amount of characters left to for the line
     push eax
-    push ebx
-
-    ; Gets the characters remaining in the line
-    mov eax, [screen_pointer]
-    sub eax, screen_base_pointer
-    mov edx, 0
-    mov ebx, 2
-    div ebx
-    
-    mov edx, 0
-    mov ebx, 80
-    div ebx
-    
-    sub ebx, edx
-    mov edx, ebx
-    
-    ; Put ' ' character in ax
-    mov ax, 0x0061
-
 .loop:
-    ; Check if there's more character to add
-    cmp edx, 0
-    je new_line_end
-    
-    ; Add space character to buffer
-    mov ecx, [screen_pointer]
-    mov [ecx], ax
-    add dword [screen_pointer], 2
-
-    ; Decrement counter
-    sub edx, 1
+    lodsb
+    cmp al, 0
+    je print.end
+    int 0x10
     jmp .loop
-
-new_line_end:    
-    pop ebx
+print.end:
     pop eax
-    pop edx
-
-    mov esp, ebp
-    pop ebp
     ret
     
 done:
@@ -183,4 +81,7 @@ done:
     nop
     jmp .loop
 
-times 1024 - ($-$$) db 0
+welcome: db "Welcome to the makaloader!", 0x00
+    
+times 510- ($-$$) db 0
+dw 0xaa55
