@@ -3,7 +3,13 @@
 
 #define VGA_ADDRESS_START 0xA0000
 
-#include "ascii.h"
+#include "utils/ascii.h"
+
+#define VGA_SCREEN_COL VGA_MAX_WIDHT/ASCII_CHAR_SIZE
+#define VGA_SCREEN_ROW VGA_MAX_HEIGHT/ASCII_CHAR_SIZE
+
+unsigned short screen_pointer_x = 0;
+unsigned short screen_pointer_y = 0;
 
 void vga_draw_pixels(unsigned short x, unsigned short y, unsigned short pixel )
 {
@@ -31,7 +37,24 @@ void vga_draw_character(unsigned short p_x, unsigned short p_y, unsigned char c,
     }
 }
 
+void vga_draw_string(const char * str, unsigned int size, unsigned short color)
+{
+    for(unsigned short i = 0; i < size; i++)
+    {
+        vga_draw_character(screen_pointer_x*ASCII_CHAR_SIZE, screen_pointer_y*ASCII_CHAR_SIZE, str[i], color);
+        if(screen_pointer_x < VGA_SCREEN_COL)
+            screen_pointer_x++;
+        else
+        {
+            screen_pointer_x = 0;
+            screen_pointer_y++;
+        }
+    }
+}
+
 void kentry()
 {
-    
+    const char * str = "Hello_World!_";
+    vga_draw_string(str, 14, 15);
+    vga_draw_string(str, 14, 15);
 }
