@@ -9,7 +9,7 @@ include $(ROOT)/kernel/make.config
 ELF:=$(PROJECT_NAME).elf
 BIN:=$(PROJECT_NAME).bin
 
-all: make-kernel make-bootloader link $(BIN)
+all: make-kernel make-bootloader link binary
 
 # Build
 make-kernel:
@@ -22,8 +22,8 @@ make-bootloader:
 link:
 	$(LD) $(LINKER_FLAGS) -T tinkerbox.ld $(BOOTLOADER_OBJS) $(KERNEL_OBJS) -o $(ELF)
 
-%.bin: %.elf
-	$(OBJ) $(OBJ_FLAGS) $< $@
+binary:
+	$(OBJCOPY) $(OBJ_FLAGS) $(ELF) $(BIN)
 
 #Cleanning
 clean: clean-root clean-bootloader clean-kernel
@@ -36,6 +36,7 @@ clean-kernel:
 
 clean-root:
 	-rm -f *.elf
+	-rm -f tinkerbox.bin
 
 run:
 	$(QEMU) $(QEMU_FLAGS)$(BIN)

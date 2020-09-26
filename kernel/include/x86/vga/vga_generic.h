@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <utils/ascii.h>
+#include <x86/vga/ascii.h>
 
 #define VGA_13_ADDRESS_START 0xA0000
 

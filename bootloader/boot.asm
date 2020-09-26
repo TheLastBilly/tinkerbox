@@ -16,7 +16,7 @@ boot:
 
     ;load image from disk
     mov ah, 0x02
-    mov al, 0x12
+    mov al, 0x60
     mov ch, 0
     mov dh, 0
     mov cl, 2

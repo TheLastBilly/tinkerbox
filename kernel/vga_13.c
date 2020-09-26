@@ -3,7 +3,7 @@
 static vga_internals_t vga_internals =
 {
     .cursor_x      = 0,
-    .cursor_y      = 0,
+    .cursor_y      = 1,
     .screen_width   = VGA_13_MAX_WIDHT,
     .screen_height  = VGA_13_MAX_HEIGHT
 };
@@ -16,22 +16,21 @@ void vga_13_draw_pixels(uint16_t x, uint16_t y, uint16_t pixel )
     vga_mem_ptr[pos] = pixel & 0xff;
 }
 
-void vga_13_draw_character(uint16_t p_x, uint16_t p_y, uint8_t c, uint16_t color)
+void vga_13_draw_character(uint16_t p_x, uint16_t p_y, char c, uint16_t color)
 {
     uint8_t * vga_mem = (uint8_t *)VGA_13_ADDRESS_START;
     uint16_t pos = p_x + p_y*vga_internals.screen_width;
 
-    if(c > UTILS_ASCII_CHARACTER_START_INDEX)
+    if(c >= UTILS_ASCII_CHARACTER_START_INDEX)
         c -= UTILS_ASCII_CHARACTER_START_INDEX;
 
-    uint8_t index = utils_ascii_96_char_map[c*UTILS_ASCII_CHAR_SIZE];
-    for(int x = 1; x < UTILS_ASCII_CHAR_SIZE+1; x++)
+    for(int x = 0; x < UTILS_ASCII_CHAR_SIZE; x++)
     {
-        for(int y = 0; y < UTILS_ASCII_CHAR_SIZE+1; y++)
+        uint8_t index = utils_ascii_96_char_map[c*UTILS_ASCII_CHAR_SIZE + x];
+        for(int y = 0; y < UTILS_ASCII_CHAR_WIDTH; y++)
         {
-            vga_mem[pos + y*VGA_13_MAX_WIDHT + x] = ((index >> y) & UTILS_ASCII_TOP_PIXEL) ? color & 0xff : 0;
+            vga_mem[pos + y*VGA_13_MAX_WIDHT + x] = ((index >> (y)) & UTILS_ASCII_TOP_PIXEL) ? color & 0xff : 0;
         }
-        index = utils_ascii_96_char_map[c*UTILS_ASCII_CHAR_SIZE + x];
     }
 }
 
