@@ -1,7 +1,7 @@
 #include "ascii.h"
 
 const unsigned char ascii_96_char_map[ASCII_TABLE_SIZE] = {
-//Taken from https://jared.geek.nz/2014/jan/custom-fonts-for-microcontrollers, 5x5 font
+//Taken from https://jared.geek.nz/2014/jan/custom-fonts-for-microcontrollers
     0x00,0x00,0x00,0x00,0x00, //  
 	0x00,0x00,0xbe,0x00,0x00, // !
 	0x00,0x07,0x00,0x07,0x00, // "
