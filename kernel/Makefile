@@ -7,7 +7,7 @@ include make.config
 all:	$(KERNEL_OBJS)
 
 %.o: %.c
-	$(CC) $(CC_FLAGS) -o $@ $<
+	$(CC) $(CC_INC_FLAGS) $(CC_FLAGS) -o $@ $<
 
 clean:
 	-rm -f *.o
