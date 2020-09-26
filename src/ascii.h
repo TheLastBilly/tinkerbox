@@ -1,7 +1,10 @@
 #pragma once
 
-#define ASCII_CHAR_SIZE 8
-#define ASCII_CHARACTER_COUNT 256
+#define ASCII_CHAR_SIZE 5
+#define ASCII_CHARACTER_COUNT 96
+#define ASCII_CHARACTER_START_INDEX 32
 #define ASCII_TABLE_SIZE ASCII_CHARACTER_COUNT*ASCII_CHAR_SIZE
 
-extern const unsigned char ascii_256_char_map[ASCII_TABLE_SIZE];
+#define ASCII_TOP_PIXEL 0x04
+
+const unsigned char ascii_96_char_map[ASCII_TABLE_SIZE];

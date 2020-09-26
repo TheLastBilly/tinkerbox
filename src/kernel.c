@@ -1,5 +1,5 @@
-#define VGA_MAX_HEIGHT  320
-#define VGA_MAX_WIDHT   200
+#define VGA_MAX_HEIGHT  200
+#define VGA_MAX_WIDHT   320
 
 #define VGA_ADDRESS_START 0xA0000
 
@@ -17,19 +17,21 @@ void vga_draw_character(unsigned short p_x, unsigned short p_y, unsigned char c,
     unsigned char * vga_mem = (unsigned char *)VGA_ADDRESS_START;
     unsigned short pos = p_x + p_y*VGA_MAX_WIDHT;
 
-    unsigned char index = ascii_256_char_map[c*ASCII_CHAR_SIZE];
-    for(unsigned short y = 0; y < ASCII_CHAR_SIZE; y++)
+    if(c > ASCII_CHARACTER_START_INDEX)
+        c -= ASCII_CHARACTER_START_INDEX;
+
+    unsigned char index = ascii_96_char_map[c*ASCII_CHAR_SIZE];
+    for(int x = 1; x < ASCII_CHAR_SIZE+1; x++)
     {
-        for(unsigned short x = 0; x < ASCII_CHAR_SIZE; x++)
+        for(int y = 0; y < ASCII_CHAR_SIZE+1; y++)
         {
-            vga_mem[pos + x + y*VGA_MAX_WIDHT] = ((index >> x) & 0x7) ? (color & 0xff) : 0x0;
+            vga_mem[pos + y*VGA_MAX_WIDHT + x] = ((index >> y) & ASCII_TOP_PIXEL) ? color & 0xff : 0;
         }
-        index = ascii_256_char_map[c*ASCII_CHAR_SIZE + y];
+        index = ascii_96_char_map[c*ASCII_CHAR_SIZE + x];
     }
 }
 
 void kentry()
 {
-    for(int x = 0; x < VGA_MAX_WIDHT; x++)
-        vga_draw_character(x*16, 0, 33, 10);
+    
 }
