@@ -1,6 +1,6 @@
 #pragma once
 
-#include <x86/include/vga_generic.h>
+#include <x86/vga/vga_generic.h>
 
 void vga_13_draw_pixels(uint16_t x, uint16_t y, uint16_t pixel );
 void vga_13_draw_character(uint16_t p_x, uint16_t p_y, uint8_t c, uint16_t color);

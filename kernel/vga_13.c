@@ -1,4 +1,4 @@
-#include <x86/include/vga_13.h>
+#include <x86/vga/vga_13.h>
 
 static vga_internals_t vga_internals =
 {
