@@ -6112,25 +6112,26 @@ int get_pixel(int x, int y)
     int index = x*3 + y*BITMAP_DIMENSIONS*3;
     for(int y2 = 0; y2 < CHARACTER_DIMENSIONS; y2 ++)
     {
+        uint16_t row = 0;
         for(int x2 = 0; x2 < CHARACTER_DIMENSIONS; x2 ++)
         {
             int p = (index + x2*3) + y2*3*BITMAP_DIMENSIONS;
-            fprintf(out, "%d,", (gimp_image.pixel_data[p] + gimp_image.pixel_data[p + 1] + gimp_image.pixel_data[p + 2]) ? 1 : 0);
+            row |= (((gimp_image.pixel_data[p] + gimp_image.pixel_data[p + 1] + gimp_image.pixel_data[p + 2]) ? 1 : 0) << x2);
         }
-        fprintf(out, "\n\t\t");
+        fprintf(out, "0x%02x,\n\t\t", row);
     }
 }
 
 int main(int argc, char const *argv[])
 {
     out = fopen("./chars.c", "w");
-    fprintf(out, "const unsigned char ascii_%d_char_map[%d] = {\n", BITMAP_DIMENSIONS, BITMAP_DIMENSIONS);
+    fprintf(out, "const unsigned short ascii_%d_char_map[%d] = {\n", BITMAP_DIMENSIONS, BITMAP_DIMENSIONS);
     int count = 0;
     for(int y = 0; y < CHARACTER_DIMENSIONS; y++)
     {
         for(int x = 0; x < CHARACTER_DIMENSIONS; x++)
         {
-            fprintf(out, "\t//%c\n\t\t", (char)count++);
+            fprintf(out, "\t//%d\n\t\t", count++);
             get_pixel(x*CHARACTER_DIMENSIONS, y*CHARACTER_DIMENSIONS);
             fprintf(out, "\n");
         }
