@@ -36,3 +36,6 @@ clean-kernel:
 
 clean-root:
 	-rm -f *.elf
+
+run:
+	$(QEMU) $(QEMU_FLAGS)$(BIN)
