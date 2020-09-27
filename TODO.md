@@ -1,0 +1,3 @@
+- Make an actual kernel video driver abstraction layer [ ]
+- Write VESA drivers support [ ]
+- Implement better ascii font support [ ]
