@@ -85,8 +85,8 @@ kernel_entry:
 
 kernel_init:
     mov esp, kernel_stack_top
-    extern kentry
-    call kentry
+    extern kmain
+    call kmain
     cli
     hlt
 

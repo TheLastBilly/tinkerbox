@@ -47,3 +47,21 @@ memset:
 
     pop edi
     ret
+
+global strlen
+strlen:
+    push edi
+    
+    mov edi, dword [esp+8]
+    mov ecx, 0x00
+
+.loop:
+    add edi, 1
+    add ecx, 1
+    cmp [edi], byte 0
+    jne .loop
+
+    mov eax, ecx
+
+    pop edi
+    ret
