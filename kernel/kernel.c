@@ -6,7 +6,7 @@
 void kentry()
 {
     char str[9] = "I'm here!";
-    memcpy(str, "sup", 3);
+    memset(str, (int)'a', 2);
     vga_13_draw_string(str, 9, 15);
     vga_13_swap_buffers();
     
