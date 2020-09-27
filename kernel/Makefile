@@ -13,5 +13,4 @@ all:	$(KERNEL_OBJS)
 	$(NASM) $(NASM_FLAGS) $< -o $@
 
 clean:
-	-rm -f *.o
-	-rm -f utils/*.o
+	-rm -f $(KERNEL_OBJS)

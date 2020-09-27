@@ -26,13 +26,13 @@ make-libc:
 
 # Linking
 link:
-	$(LD) $(LINKER_FLAGS) -T tinkerbox.ld $(BOOTLOADER_OBJS) $(KERNEL_OBJS) $(LIBC_OBJS) -o $(ELF)
+	$(LD) $(LINKER_FLAGS) -T linker.ld $(BOOTLOADER_OBJS) $(KERNEL_OBJS) $(LIBC_OBJS) -o $(ELF)
 
 binary:
 	$(OBJCOPY) $(OBJ_FLAGS) $(ELF) $(BIN)
 
 #Cleanning
-clean: clean-root clean-bootloader clean-kernel
+clean: clean-root clean-bootloader clean-kernel clean-libc
 
 clean-bootloader:
 	$(MAKE) -C $(BOOTLOADER_ROOT) clean

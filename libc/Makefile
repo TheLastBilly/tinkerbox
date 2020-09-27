@@ -13,4 +13,4 @@ all:	$(LIBC_OBJS)
 	$(NASM) $(NASM_FLAGS) $< -o $@
 
 clean:
-	-rm -f *.o
+	-rm -f $(LIBC_OBJS)

@@ -10,4 +10,4 @@ all:	$(BOOTLOADER_OBJS)
 	$(NASM) $(NASM_FLAGS) $< -o $@
 
 clean:
-	-rm -f *.o
+	-rm -f $(BOOTLOADER_OBJS)
