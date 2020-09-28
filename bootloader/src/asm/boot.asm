@@ -10,6 +10,8 @@ boot:
     mov ax, 0x2401
     int 0x15
 
+    mov ah, 0xf4
+
     ;Sets vga to vga mode
     mov ax, 0x13
     int 0x10
@@ -74,9 +76,24 @@ done:
     nop
     jmp .loop
 
-welcome: db "Welcome to the makaloader!", 0x00
 disk_id: db 0x00
     
+print:
+    lodsb
+    
+    cmp al,al
+    jz .done
+    
+    mov ah, 0x0e
+    int 0x10
+
+    jmp print
+
+.done:
+    ret
+
+vesa_ok: db "vesa mode found!",0x00 
+
 times 510- ($-$$) db 0
 dw 0xaa55
 
