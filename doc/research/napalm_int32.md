@@ -4,7 +4,7 @@
 - Clear interrupts
 - Push all general porpuse registers to stack (pusha)
 - Move the `use32` routine to 0x7c00 so it can be loaded once in 16 bit mode
-- Clear direction flag (why?)
+- Clear direction flag
 - Move to [reloc](#reloc)
 
 ### <a name="reloc"></a>reloc
