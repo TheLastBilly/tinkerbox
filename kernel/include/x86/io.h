@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <libc/include/stdint.h>
 
 void out_u8(uint16_t port, uint8_t byte);
 void out_u16(uint16_t port, uint16_t word);

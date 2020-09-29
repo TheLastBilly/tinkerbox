@@ -1,6 +1,6 @@
 #pragma once
 
-#include <x86/vga/vga_generic.h>
+#include <kernel/include/x86/vga/vga_generic.h>
 
 #define VGA_13_ADDRESS_START 0xA0000
 

@@ -1,5 +1,5 @@
-#include <x86/vga/vga_13.h>
-#include <string.h>
+#include <kernel/include/x86/vga/13/vga_13.h>
+#include <libc/include/string.h>
 
 static vga_internals_t vga_internals =
 {

@@ -1,4 +1,4 @@
-#include <x86/vga/ascii.h>
+#include <kernel/include/x86/vga/ascii.h>
 
 const unsigned char VGA_13_ASCII_96_char_map[VGA_13_ASCII_TABLE_SIZE] = {
 //Taken from https://jared.geek.nz/2014/jan/custom-fonts-for-microcontrollers

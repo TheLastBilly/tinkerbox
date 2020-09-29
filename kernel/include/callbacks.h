@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stddef.h>
+#include <libc/include/stddef.h>
 
 typedef void    (*k_void_callback_t)(void);
 typedef void    (*k_void_char_callback_t)(char);

@@ -2,19 +2,36 @@ section .boot
 bits 16
 global boot
 
+KERNEL_STACK_SIZE equ 16384
+
 boot:
     ; Load disk id
     mov [disk_id], dl
 
+    ;Sets vga to text mode
+    mov ax, 0x03
+    int 0x10
+    
+    ;Enable interrups and cleac segment regs
+    sti
+    mov ax, 0x00
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    ;Gets VESA bios info
+    push es
+    mov ax, 0x4f00
+    mov di, vesa_params
+    int 0x10
+    pop es
+    cmp ax, 0x4f
+    jne print_vesa_error
+
     ;Turns on A20 line
     mov ax, 0x2401
     int 0x15
-
-    mov ah, 0xf4
-
-    ;Sets vga to vga mode
-    mov ax, 0x13
-    int 0x10
 
     ;load image from disk
     mov ah, 0x02
@@ -68,21 +85,14 @@ gdt_pointer:
 
 CODE_SEG equ gdt_code - gdt_start ;Code segment offset
 DATA_SEG equ gdt_data - gdt_start ; Data segment offset
-    
-done:
-    cli
-.loop:
-    nop
-    nop
-    jmp .loop
 
 disk_id: db 0x00
     
 print:
     lodsb
     
-    cmp al,al
-    jz .done
+    cmp al,0
+    je .done
     
     mov ah, 0x0e
     int 0x10
@@ -92,7 +102,16 @@ print:
 .done:
     ret
 
-vesa_ok: db "vesa mode found!",0x00 
+print_vesa_error:
+    mov si, vesa_error
+    call print
+    jmp done
+    
+done:
+    cli
+    hlt
+
+vesa_error: db "error getting vesa info",0x00 
 
 times 510- ($-$$) db 0
 dw 0xaa55
@@ -101,15 +120,28 @@ bits 32
 kernel_entry:
 
 kernel_init:
+    ;Give the kernel the position of the kernel params
+    mov esi, [kernel_params]
+    mov ecx, (kernel_params_end - kernel_params)
+
+    ;Set the stack pointer
     mov esp, kernel_stack_top
+
+    ;Call kernel
     extern kmain
     call kmain
     cli
     hlt
 
+kernel_params:
+    vesa_return: db 0x00
+    vesa_params:
+        resb 512
+    vesa_params_end:
+kernel_params_end:
+
 section .bss
 align 4
-
 kernel_stack_bottom: equ $
-	resb 16384 ; 16 KB
+	resb KERNEL_STACK_SIZE 
 kernel_stack_top:

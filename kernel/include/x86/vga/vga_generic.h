@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <libc/include/stdint.h>
 #include "ascii.h"
 
 typedef struct vga_internals_t
