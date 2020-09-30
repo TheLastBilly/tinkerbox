@@ -6,13 +6,10 @@
 
 #include <libc/include/string.h>
 
-char test[16] = "This is aXtest";
+char * intro = "Tinkerbox is on the way!";
 
 void kmain()
-{   
-    const char * n_test = " trst";
-    memcpy(&test[9], n_test, 5);
-    k_text_mode_print(test);
-    k_text_mode_new_line();
+{
+    k_text_mode_print(intro);
     return;
 }

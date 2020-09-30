@@ -104,3 +104,48 @@ memchr.end:
     mov esp, ebp
     pop ebp
     ret
+
+global strrev
+strrev:
+    push ebp
+    mov ebp,esp
+    push ecx    ; Stores the string's last character
+    push edi    ; Saves the string pointer
+    push ebx    ; Used for moving operations
+                ; eax: Saves the current character to copy 
+
+    mov edi, [ebp+8] ; Save string pointer to edi
+
+    ; Get the string length and save its last character's pointer into ecx
+    push edi
+    call strlen
+    pop edi
+
+    mov ecx, edi
+    add ecx, eax
+    sub ecx, 1
+
+.loop:
+    ;Check if edi is bigger than ecx
+    cmp ecx, edi
+    js strrev.end
+
+    ; Swap current ecx and edi
+    mov al, byte [edi]
+    mov bl, byte [ecx]
+    mov byte [edi], bl
+    mov byte [ecx], al
+
+    dec ecx
+    inc edi
+
+    jmp .loop
+
+strrev.end:
+
+    pop ebx
+    pop edi
+    pop ecx
+    mov esp, ebp
+    pop ebp
+    ret
