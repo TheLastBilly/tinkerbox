@@ -8,8 +8,8 @@ memcpy:
     push esi
     push edi
 
-    mov esi, dword [ebp+8]     ; Save the source into esi
-    mov edi, dword [ebp+12]      ; Save the dest into edi
+    mov edi, dword [ebp+8]      ; Save the dest into edi
+    mov esi, dword [ebp+12]     ; Save the source into esi
     mov ecx, dword [ebp+16]     ; Save the size into ecx
 
 .loop:

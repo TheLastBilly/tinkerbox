@@ -6,15 +6,13 @@
 
 #include <libc/include/string.h>
 
-const char * test = "This is a Xtest";
+char test[16] = "This is aXtest";
 
 void kmain()
 {   
-    k_text_mode_print("Testing memchr\n");
-    char * ptr = (char *)memchr(test, 'Y', 16);
-    if(ptr == NULL)
-        k_text_mode_print("not found");
-    else
-        k_text_mode_print("found");
+    const char * n_test = " trst";
+    memcpy(&test[9], n_test, 5);
+    k_text_mode_print(test);
+    k_text_mode_new_line();
     return;
 }
