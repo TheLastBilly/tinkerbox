@@ -9,3 +9,4 @@
 #define KERNEL_TEXT_ATTRIBUTE   0x0f00
 
 void k_text_mode_print(const char * str);
+void k_text_mode_new_line();

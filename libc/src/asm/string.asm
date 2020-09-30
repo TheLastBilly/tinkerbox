@@ -8,8 +8,8 @@ memcpy:
     push esi
     push edi
 
-    mov esi, dword [ebp+12]     ; Save the source into esi
-    mov edi, dword [ebp+8]      ; Save the dest into edi
+    mov esi, dword [ebp+8]     ; Save the source into esi
+    mov edi, dword [ebp+12]      ; Save the dest into edi
     mov ecx, dword [ebp+16]     ; Save the size into ecx
 
 .loop:
@@ -64,4 +64,43 @@ strlen:
     mov eax, ecx
 
     pop edi
+    ret
+
+global memchr
+memchr:
+    push ebp
+    mov ebp,esp
+    push ecx
+    push edi
+
+    mov edi, [ebp + 8] ;Get source
+
+    mov al, byte [ebp + 12] ;Get the character
+    mov ecx, [ebp + 16]  ;Get the size
+
+    ; Check if the size is over
+    cmp ecx, dword 0x00
+    je memchr.end.nomatch
+
+    ; Check if the character was found    
+    cld
+    repne scasb
+    ;Jump to the end if you found it
+    je memchr.end.match
+
+    ; Set return value to null if nothing was found
+memchr.end.nomatch:
+    mov eax, 0x00
+    jmp memchr.end
+
+memchr.end.match:
+    dec edi
+    mov eax, edi
+
+memchr.end:
+
+    pop edi
+    pop ecx
+    mov esp, ebp
+    pop ebp
     ret
