@@ -4,7 +4,7 @@ global memcpy
 memcpy:
     push ebp
     mov ebp,esp
-    push ax
+    push ecx
     push esi
     push edi
 
@@ -12,22 +12,13 @@ memcpy:
     mov esi, dword [ebp+12]     ; Save the source into esi
     mov ecx, dword [ebp+16]     ; Save the size into ecx
 
-.loop:
-    mov al, byte [esi]              ; Get value to move
-    mov byte [edi], al              ; Move value to next dest
-    add esi, 1                  ; Increment
-    add edi, 1
+    rep movsb
 
-    sub ecx, 1
-    cmp ecx, 0
-    jne .loop
-
-    mov ecx, [ebp+8]
-    mov dword [ebp-4], ecx
+    mov eax, dword [ebp+8]
 
     pop edi
     pop esi
-    pop ax
+    pop ecx
     mov esp, ebp
     pop ebp
     ret
@@ -145,6 +136,35 @@ strrev.end:
 
     pop ebx
     pop edi
+    pop ecx
+    mov esp, ebp
+    pop ebp
+    ret
+
+global strncat
+strncat:
+    push ebp
+    mov ebp,esp
+    push ecx
+    push esi
+    push edi
+
+    mov edi, dword [ebp+8]      ; Save the dest into edi
+    mov esi, dword [ebp+12]     ; Save the source into esi
+    mov ecx, dword [ebp+16]     ; Save the size into ecx
+
+    push edi
+    call strlen
+    pop edi
+    
+    add edi, eax
+
+    rep movsb
+
+    mov eax, dword [ebp+8]
+
+    pop edi
+    pop esi
     pop ecx
     mov esp, ebp
     pop ebp
